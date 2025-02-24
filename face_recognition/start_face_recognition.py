@@ -1,8 +1,9 @@
 import os
 import uuid
 import asyncio
-from stage1.main import process_images  
+from stage1.main import process_images as stage1_process
 from stage2.face_recognizer import FaceRecognizerStage2
+from data.err_msgs import ErrorMessages
 
 async def start_face_recognition(r_id, abs_path):
     success = False
@@ -14,10 +15,8 @@ async def start_face_recognition(r_id, abs_path):
             msg = f"The file {abs_path} does not exist."
             raise FileNotFoundError(msg)
 
-        # Run Stage 1 asynchronously (assumes it outputs to stage1/People_with_faces)
-        await asyncio.to_thread(stage1_process, abs_path)  # Runs in thread since Stage 1 might not be async
+        await asyncio.to_thread(stage1_process, abs_path)
 
-        # Run Stage 2
         input_folder = os.path.join(os.path.dirname(__file__), "stage1", "People_with_faces")
         if not os.path.exists(input_folder):
             msg = "Stage 1 output folder not found."
@@ -29,7 +28,7 @@ async def start_face_recognition(r_id, abs_path):
         msg = "Face recognition process completed successfully"
     except Exception as e:
         print(f"start_face_recognition(): {e}")
-        msg = msg or "An error occurred during processing"
+        msg = msg or ErrorMessages.GENERIC_ERROR.value
     finally:
         return {
             "success": success,
@@ -39,6 +38,6 @@ async def start_face_recognition(r_id, abs_path):
 
 if __name__ == "__main__":
     r_id = "test_r_id"
-    abs_path = "path/to/your/input/file"  # Replace with actual path
+    abs_path = "path/to/your/input/folder"
     result = asyncio.run(start_face_recognition(r_id, abs_path))
     print(result)

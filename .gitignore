@@ -1,8 +1,22 @@
+# Python virtual environment
 venv/
+env/
+
+# Python cache files
 __pycache__/
-*.pt
-*.so
-*.bin
-<<<<<<< HEAD
-=======
->>>>>>> db4c1fbd (Removed venv and added .gitignore)
+*.py[cod]
+*$py.class
+
+# Environment variables file (contains sensitive data)
+.env
+
+# SQLite database (if used)
+.sql/
+db.db
+
+# Temporary files
+*.log
+*.temp
+
+# macOS-specific
+.DS_Store

@@ -3,7 +3,7 @@ import numpy as np
 from insightface.app import FaceAnalysis
 
 app = FaceAnalysis(name='buffalo_l')
-app.prepare(ctx_id=0)  
+app.prepare(ctx_id=0)  # CPU; use -1 for GPU if available
 
 def get_embeddings(image):
     try:
