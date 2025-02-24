@@ -3,5 +3,6 @@ __pycache__/
 *.pt
 *.so
 *.bin
-venv/
-venv/
+<<<<<<< HEAD
+=======
+>>>>>>> db4c1fbd (Removed venv and added .gitignore)
