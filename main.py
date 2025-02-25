@@ -17,21 +17,3 @@ if __name__ == "__main__":
     
     # Run the Flask development server
     app.run(host="0.0.0.0", port=8000, debug=True)
-
-    # Optional: Test the pipeline directly (uncomment to use)
-    """
-    import os
-    import asyncio
-    from start_face_recognition import start_face_recognition
-
-    test_r_id = "test_r_id"
-    test_abs_path = "Photos"
-    
-    if not os.path.exists(test_abs_path):
-        os.makedirs(test_abs_path, exist_ok=True)
-        print(f"Created test input folder: {test_abs_path}")
-
-    print("Starting test run...")
-    result = asyncio.run(start_face_recognition(test_r_id, test_abs_path))
-    print(result)
-    """
