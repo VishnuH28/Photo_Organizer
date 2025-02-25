@@ -1,14 +1,31 @@
 import os
 import uuid
 import asyncio
-from stage1.main import process_images as stage1_process
-from stage2.face_recognizer import FaceRecognizerStage2
+from face_recognition.stage1.main import process_images as stage1_process
+from face_recognition.stage2.face_recognizer import FaceRecognizerStage2
 from data.err_msgs import ErrorMessages
+from database.postgres import postgres, check_connection
+from data.table_names import TableNames
 
 async def start_face_recognition(r_id, abs_path):
     success = False
     msg = ""
     req_id = "rqid-" + str(uuid.uuid4())
+
+    # Save request to database
+    global postgres
+    postgres = check_connection(postgres)
+    try:
+        with postgres.cursor() as cur:
+            cur.execute(
+                f"INSERT INTO {TableNames.FACE_RECOGNITION_REQUEST.value} (req_id, r_id, status) VALUES (%s, %s, %s)",
+                (req_id, r_id, 'processing')
+            )
+            postgres.commit()
+    except Exception as e:
+        print(f"Failed to start process in DB: {e}")
+        msg = "Failed to initiate process"
+        return {"success": False, "msg": msg, "req_id": req_id}
 
     try:
         if not os.path.exists(abs_path):
@@ -26,9 +43,23 @@ async def start_face_recognition(r_id, abs_path):
         recognizer.process_images(input_folder, req_id)
         success = True
         msg = "Face recognition process completed successfully"
+
+        # Update status to completed
+        with postgres.cursor() as cur:
+            cur.execute(
+                f"UPDATE {TableNames.FACE_RECOGNITION_REQUEST.value} SET status = 'completed' WHERE req_id = %s",
+                (req_id,)
+            )
+            postgres.commit()
     except Exception as e:
         print(f"start_face_recognition(): {e}")
         msg = msg or ErrorMessages.GENERIC_ERROR.value
+        with postgres.cursor() as cur:
+            cur.execute(
+                f"UPDATE {TableNames.FACE_RECOGNITION_REQUEST.value} SET status = 'stuck' WHERE req_id = %s",
+                (req_id,)
+            )
+            postgres.commit()
     finally:
         return {
             "success": success,
