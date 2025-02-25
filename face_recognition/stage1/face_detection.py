@@ -2,7 +2,7 @@ import cv2
 import os
 from mtcnn.mtcnn import MTCNN
 import numpy as np
-from roi_analysis import is_face_engaged, draw_roi
+from .roi_analysis import is_face_engaged, draw_roi
 from PIL import Image
 import time
 

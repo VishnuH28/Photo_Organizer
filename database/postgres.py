@@ -13,11 +13,11 @@ def create_connection():
             user=env.POSTGRES_USER,
             password=env.POSTGRES_PASSWORD,
             host=env.POSTGRES_HOST,
-            port=env.POSTGRES_PORT,
+            port=env.POSTGRES_PORT
         )
         print("Postgres DB connected")
     except OperationalError as e:
-        print(f"The error '{e}' occurred")
+        print(f"Connection error: {e}")
     return connection
 
 def check_connection(connection):
@@ -27,19 +27,20 @@ def check_connection(connection):
             print("Postgres DB connection lost. Reconnecting...")
             connection = create_connection()
     except Exception as e:
-        print(f"An error occurred while checking the connection: {e}")
+        print(f"Check connection error: {e}")
     return connection
 
 # Establish initial connection
-postgres = create_connection()  # GLOBAL VARIABLE
+postgres = create_connection()
+if not postgres:
+    raise Exception("Initial PostgreSQL connection failed. Check .env settings.")
 
 # Event listener to check connection status and reconnect if necessary
 def check_connection_periodically():
     global postgres
     while True:
         postgres = check_connection(postgres)
-        time.sleep(60)  # Check every 60 seconds
+        time.sleep(60)
 
-# Run the connection check in a separate thread
 thread = threading.Thread(target=check_connection_periodically, daemon=True)
 thread.start()

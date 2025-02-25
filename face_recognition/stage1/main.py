@@ -1,5 +1,5 @@
 import os
-from face_detection import FaceDetector
+from .face_detection import FaceDetector
 
 def process_images(abs_path):
     input_folder = abs_path
