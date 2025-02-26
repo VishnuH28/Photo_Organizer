@@ -1,15 +1,14 @@
 import os
-from .face_detection import FaceDetector
+from .face_detection import process_images as detect_faces_in_folder
 
 def process_images(abs_path):
+    """Process images in a folder for face detection (Stage 1 entry point)."""
     input_folder = abs_path
     output_folder = os.path.join(os.path.dirname(__file__), "People_with_faces")
     
-    detector = FaceDetector()
-    
     try:
         os.makedirs(output_folder, exist_ok=True)
-        images_with_faces = detector.process_images(input_folder, output_folder)
+        images_with_faces, _ = detect_faces_in_folder(input_folder, output_folder)
         
         if images_with_faces:
             print("\nImages with faces detected:")
@@ -21,5 +20,4 @@ def process_images(abs_path):
         return []
 
 if __name__ == "__main__":
-    abs_path = "Photos"
-    process_images(abs_path)
+    process_images("Photos")

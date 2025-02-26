@@ -3,7 +3,7 @@ from database.postgres import postgres, check_connection
 
 def find_embeddings(req_id, embedding):
     global postgres
-    postgres = check_connection(postgres)  # Ensure connection is alive
+    postgres = check_connection(postgres)  
     results = []
     try:
         with postgres.cursor() as cur:
